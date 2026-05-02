@@ -286,9 +286,7 @@ def main():
                         print("Task not found.")
                         continue
 
-                    confirm = input(f"Are you sure you want to delete task {deleted_task.name}? [y/N] ").strip().upper()
-
-                    if confirm == "Y":
+                    if input(f"Are you sure you want to delete task {deleted_task.name}? [y/N] ").strip().upper().startswith("Y"):
                         selected_project.tasks.remove(deleted_task)
                     else:
                         print("Cancelled.")
@@ -302,9 +300,7 @@ def main():
                         print("Project not found.")
                         continue
 
-                    confirm = input(f"Are you sure you want to delete project {deleted_project.name}? [y/N] ").strip().upper()
-
-                    if confirm == "Y":
+                    if input(f"Are you sure you want to delete project {deleted_project.name}? [y/N] ").strip().upper().startswith("Y"):
                         projects.remove(deleted_project)
                     else:
                         print("Cancelled.")
