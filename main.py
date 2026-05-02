@@ -184,9 +184,7 @@ def load_json(filepath: str = FILEPATH) -> list[Project]:
     return projects
 
 def quit_program(projects: list[Project]) -> None:
-    if input(
-            "Are you sure you want to exit? (Changes you made will be automatically saved) [Y/n] ").strip().upper().startswith(
-            "N"):
+    if input("Are you sure you want to exit? (Changes you made will be automatically saved) [Y/n] ").strip().upper().startswith("N"):
         print("Cancelled.")
     else:
         save_changes(projects)
@@ -288,9 +286,7 @@ def main():
                         print("Task not found.")
                         continue
 
-                    confirm = input(
-                        f"Are you sure you want to delete task {deleted_task.name}? [y/N] "
-                    ).strip().upper()
+                    confirm = input(f"Are you sure you want to delete task {deleted_task.name}? [y/N] ").strip().upper()
 
                     if confirm == "Y":
                         selected_project.tasks.remove(deleted_task)
@@ -306,9 +302,7 @@ def main():
                         print("Project not found.")
                         continue
 
-                    confirm = input(
-                        f"Are you sure you want to delete project {deleted_project.name}? [y/N] "
-                    ).strip().upper()
+                    confirm = input(f"Are you sure you want to delete project {deleted_project.name}? [y/N] ").strip().upper()
 
                     if confirm == "Y":
                         projects.remove(deleted_project)
