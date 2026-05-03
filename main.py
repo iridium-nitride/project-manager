@@ -112,39 +112,42 @@ def print_help() -> None:
     print("""\
 Project Manager v1.0
 
+A simple CLI project/task management program.
+Commands are used to create, view, and manage projects and tasks.
 Commands are not case sensitive.
+All data is stored in a 'data.json' file; do not remove or rename this file.
 
-PROJECTS, P:
+:: PROJECTS/P:
     Lists projects.
-
-TASKS, T:
-    Lists tasks.
-
-OPEN, O:
-    Opens new project; requires project name as argument (e.g. 'OPEN MY_PROJECT').
-
-NEW_PROJECT, NP:
+    
+:: TASKS/T:
+    Lists tasks in currently open project.
+    
+:: OPEN/O [project name]:
+    Opens specified project.
+    
+:: NEW_PROJECT/NP:
     Creates new project.
-
-NEW_TASK, NEW, NT, N:
-    Creates new task in open project.
-
-COMPLETE, C:
+    
+:: NEW_TASK/NEW/NT/N:
+    Creates new task in currently open project.
+    
+:: COMPLETE/C:
     Marks specified task as completed (or vice versa).
-
-CLOSE, X:
+    
+:: CLOSE/X:
     Closes currently open project.
-
-SAVE, S:
+    
+:: SAVE/S:
     Saves changes to JSON.
-
-HELP, H:
-    Opens this help menu.
-
-EXIT, QUIT, Q:
+    
+:: HELP/H:
+    Opens help menu.
+    
+:: EXIT/QUIT/Q:
     Exits the program while auto-saving changes.
-
-FORCE_QUIT, FQ:
+    
+:: FORCE_QUIT/FQ:
     Exits the program without saving changes.
 """)
 
