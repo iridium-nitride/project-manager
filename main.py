@@ -211,7 +211,6 @@ def main():
         tokens: list[str] = input(f"{selected_project.name if selected_project else ""}{" " if selected_project else ""}:: ").upper().strip().split()
 
         if tokens == [""]:
-            print("Please enter a command. Try 'HELP' for a list of commands.")
             continue
 
         cmd: str = tokens[0]
