@@ -208,13 +208,13 @@ def main():
     print()
 
     while True:
-        tokens: list[str] = input(f"{selected_project.name if selected_project else ""}{" " if selected_project else ""}:: ").upper().strip().split()
+        tokens = input(f"{selected_project.name if selected_project else ""}{" " if selected_project else ""}:: ").upper().strip().split()
 
         if tokens == [""]:
             continue
 
-        cmd: str = tokens[0]
-        arg: str = tokens[1] if len(tokens) > 1 else ""
+        cmd = tokens[0]
+        arg = tokens[1] if len(tokens) > 1 else ""
 
         match cmd:
             case "PROJECTS" | "P":
