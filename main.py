@@ -1,4 +1,15 @@
 import json
+from rich.console import Console
+from rich.theme import Theme
+from rich.table import Table
+from rich.rule import Rule
+
+theme = Theme({
+    "error": "red",
+    "warning": "yellow"
+})
+
+console = Console(theme=theme)
 
 FILEPATH: str = "data.json"
 
@@ -32,15 +43,14 @@ class Task:
         }
 
 def query_new_project(existing_projects: list[Project]) -> Project:
-    print("NEW PROJECT")
-    print("-----------")
+    console.print(Rule("NEW PROJECT"))
 
     while True:
         name = input("NAME (Will be converted to THIS_FORMAT): ").strip().upper().replace(" ", "_")
         if not name: continue
 
         if any(project.name == name for project in existing_projects):
-            print("Project with that name already exists.")
+            console.print("Project with that name already exists.", style="warning")
             continue
 
         break
@@ -52,15 +62,14 @@ def query_new_project(existing_projects: list[Project]) -> Project:
     return Project(name=name, description=description, tasks=[])
 
 def query_new_task(existing_tasks: list[Task]) -> Task:
-    print("NEW TASK")
-    print("--------")
+    console.print(Rule("NEW TASK"))
 
     while True:
         name = input("NAME (Will be converted to THIS_FORMAT): ").strip().upper().replace(" ", "_")
         if not name: continue
 
         if any(task.name == name for task in existing_tasks):
-            print("Task with that name already exists.")
+            console.print("Task with that name already exists.", style="warning")
             continue
 
         break
@@ -76,40 +85,58 @@ def query_new_task(existing_tasks: list[Task]) -> Task:
             if 1 <= priority <= 5:
                 break
             else:
-                print("Priority must be between 1 and 5.")
+                console.print("Priority must be between 1 and 5.", style="warning")
         except ValueError:
-            print("Please enter a number.")
+            console.print("Please enter a number.", style="warning")
 
     return Task(name=name, description=description, priority=priority, completed=False)
 
 def print_projects(projects: list[Project]) -> None:
     if not projects:
-        print("No projects found.")
+        console.print("No projects found.", style="warning")
+        return
 
-    for i, project in enumerate(projects):
-        print(f"{project.name}")
-        print(f"-- DESCRIPTION: {project.description}")
-        print(f"-- TASKS REMAINING: {len([task for task in project.tasks if not task.completed])}")
-        print(f"-- TOTAL TASKS: {len(project.tasks)}")
+    table = Table(title="Projects")
 
-        if i < len(projects) - 1:
-            print()
+    table.add_column("Name", style="bold")
+    table.add_column("Description")
+    table.add_column("Remaining Tasks", justify="right")
+    table.add_column("Total Tasks", justify="right")
+
+    for project in projects:
+        table.add_row(
+            project.name,
+            project.description,
+            str(sum(not task.completed for task in project.tasks)),
+            str(len(project.tasks))
+        )
+
+    console.print(table)
 
 def print_tasks(project: Project) -> None:
     if not project.tasks:
-        print("No tasks found.")
+        console.print("No tasks found.", style="warning")
+        return
 
-    for i, task in enumerate(project.tasks):
-        print(f"{task.name}")
-        print(f"-- DESCRIPTION: {task.description}")
-        print(f"-- PRIORITY: {task.priority}")
-        print(f"-- COMPLETED: {task.completed}")
+    table = Table(title=f"{project.name}: Tasks")
 
-        if i < len(project.tasks) - 1:
-            print()
+    table.add_column("Name", style="bold")
+    table.add_column("Completed", style="bold")
+    table.add_column("Priority", justify="right")
+    table.add_column("Description")
+
+    for task in project.tasks:
+        table.add_row(
+            task.name,
+            "Yes" if task.completed else "No",
+            str(task.priority),
+            task.description
+        )
+
+    console.print(table)
 
 def print_help() -> None:
-    print("""\
+    console.print("""\
 Project Manager v1.0
 
 A simple CLI project/task management program.
@@ -188,7 +215,7 @@ def load_json(filepath: str = FILEPATH) -> list[Project]:
 
 def quit_program(projects: list[Project]) -> None:
     if input("Are you sure you want to exit? (Changes you made will be automatically saved) [Y/n] ").strip().upper().startswith("N"):
-        print("Cancelled.")
+        console.print("Cancelled.")
     else:
         save_changes(projects)
         quit()
@@ -197,15 +224,15 @@ def force_quit_program() -> None:
     if input("Are you sure you want to exit without saving changes? [y/N] ").strip().upper().startswith("Y"):
         quit()
     else:
-        print("Cancelled.")
+        console.print("Cancelled.")
 
 def main():
     projects = load_json()
     selected_project = None
 
-    print("Welcome to Project Manager v1.0!")
-    print("Type 'HELP' for a list of commands.")
-    print()
+    console.print("Welcome to Project Manager v1.0!")
+    console.print("Type 'HELP' for a list of commands.")
+    console.print()
 
     while True:
         tokens = input(f"{selected_project.name if selected_project else ""}{" " if selected_project else ""}:: ").upper().strip().split()
@@ -222,13 +249,13 @@ def main():
 
             case "TASKS" | "T":
                 if not selected_project:
-                    print("No project selected.")
+                    console.print("No project selected.", style="warning")
                     continue
                 print_tasks(selected_project)
 
             case "OPEN" | "O":
                 if not arg:
-                    print("Expecting argument (to specify project) but none found. Try 'OPEN MY_PROJECT'")
+                    console.print("Expecting argument (to specify project) but none found. Try 'OPEN MY_PROJECT'", style="error")
                     continue
 
                 selected_project = next(
@@ -237,7 +264,7 @@ def main():
                 )
 
                 if not selected_project:
-                    print("Project not found.")
+                    console.print("Project not found.", style="warning")
 
             case "NEW_PROJECT" | "NP":
                 new_project: Project = query_new_project(projects)
@@ -246,7 +273,7 @@ def main():
 
             case "NEW_TASK" | "NEW" | "NT" | "N":
                 if not selected_project:
-                    print("No project selected.")
+                    console.print("No project selected.", style="warning")
                     continue
 
                 new_task: Task = query_new_task(selected_project.tasks)
@@ -254,11 +281,11 @@ def main():
 
             case "COMPLETE" | "C":
                 if not selected_project:
-                    print("No project selected.")
+                    console.print("No project selected.", style="warning")
                     continue
 
                 if not arg:
-                    print("No task provided.")
+                    console.print("No task provided.", style="warning")
                     continue
 
                 selected_task = next(
@@ -267,14 +294,14 @@ def main():
                 )
 
                 if not selected_task:
-                    print("Task not found.")
+                    console.print("Task not found.", style="warning")
                     continue
 
                 selected_task.completed = not selected_task.completed
 
             case "DELETE" | "D":
                 if not arg:
-                    print("You must specify the task or project to delete.")
+                    console.print("You must specify the task or project to delete.", style="warning")
                     continue
 
                 if selected_project:
@@ -284,13 +311,13 @@ def main():
                     )
 
                     if not deleted_task:
-                        print("Task not found.")
+                        console.print("Task not found.", style="warning")
                         continue
 
                     if input(f"Are you sure you want to delete task {deleted_task.name}? [y/N] ").strip().upper().startswith("Y"):
                         selected_project.tasks.remove(deleted_task)
                     else:
-                        print("Cancelled.")
+                        console.print("Cancelled.")
                 else:
                     deleted_project = next(
                         (project for project in projects if project.name == arg),
@@ -298,20 +325,20 @@ def main():
                     )
 
                     if not deleted_project:
-                        print("Project not found.")
+                        console.print("Project not found.", style="warning")
                         continue
 
                     if input(f"Are you sure you want to delete project {deleted_project.name}? [y/N] ").strip().upper().startswith("Y"):
                         projects.remove(deleted_project)
                     else:
-                        print("Cancelled.")
+                        console.print("Cancelled.")
 
             case "CLOSE" | "X":
                 selected_project = None
 
             case "SAVE" | "S":
                 save_changes(projects)
-                print("Changes saved.")
+                console.print("Changes saved.")
 
             case "HELP" | "H":
                 print_help()
@@ -323,9 +350,9 @@ def main():
                 force_quit_program()
 
             case _:
-                print("Command not found. Try 'HELP' for a list of commands.")
+                console.print("Command not found. Try 'HELP' for a list of commands.", style="warning")
 
-        print()
+        console.print()
 
 if __name__ == "__main__":
     main()
