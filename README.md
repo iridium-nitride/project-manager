@@ -18,6 +18,7 @@ The program is command-based, with these commands:
 - `:: NEW_PROJECT/NP`: Creates new project.
 - `:: NEW_TASK/NEW/NT/N`: Creates new task in currently open project.
 - `:: COMPLETE/C`: Marks specified task as completed (or vice versa).
+- `:: DELETE/D`: Deletes specified project or task (if project is selected).
 - `:: CLOSE/X`: Closes currently open project.
 - `:: SAVE/S`: Saves changes to JSON.
 - `:: HELP/H`: Opens help menu.

@@ -162,6 +162,9 @@ All data is stored in a 'data.json' file; do not remove or rename this file.
 :: COMPLETE/C:
     Marks specified task as completed (or vice versa).
     
+:: DELETE/D:
+    Deletes specified project or task (if project is selected).
+    
 :: CLOSE/X:
     Closes currently open project.
     
